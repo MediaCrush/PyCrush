@@ -10,7 +10,9 @@ def bind(**cfg):
         endpoint = cfg['endpoint'] # It's okay to blow up if the endpoint is not provided.
         method = cfg.get('method', 'GET')
         required_parameters = cfg.get('parameters', []) 
-        _args = None
+
+        _args = dict() 
+        _request_kwargs = dict()
 
         def __init__(self, base, params):
             self._url = base + self.endpoint
@@ -30,14 +32,17 @@ def bind(**cfg):
             for param in self.required_parameters:
                 if param not in params:
                     raise PyCrushError("Required parameter %r is not present." % param)
-                
-                self._args[param] = params[param]
+       
+                value = params[param] 
+                if param == 'file':
+                    self._request_kwargs['files'] = {param: value}
+                else:
+                    self._args[param] = value 
+   
+            self._request_kwargs['data'] = self._args 
              
         def run(self):
-            if self._args:
-                rq = requests.request(self.method, self._url, **self._args)
-            else:
-                rq = requests.request(self.method, self._url)
+            rq = requests.request(self.method, self._url, **self._request_kwargs)
             return rq.json(), rq.status_code
 
     def _call(api, **params): # _call is called as an instance method; i.e, `api` is `self`.
@@ -79,7 +84,7 @@ class API(object):
     )
 
 if __name__ == '__main__':
+    import sys
     api = API()
 
-    print api.exists(hash='V_3ZkEzIUW9E')
-    print api.info(list=['V_3ZkEzIUW9E', '6-5E-TOqYQAr'])
+    print api.upload_file(file=open(sys.argv[1]))
