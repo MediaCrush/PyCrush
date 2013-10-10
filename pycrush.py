@@ -7,8 +7,9 @@ re_path_template = re.compile('\<\w+\>')
 class PyCrushException(Exception): pass
 class SpecificException(PyCrushException):
     def __init__(self, message, code):
-        super(Exception, self).__init__(self, message)
+        super(PyCrushException, self).__init__(self, message)
         self.code = code
+        self.message = message
 
 class UploadException(SpecificException): pass
 class MediaException(SpecificException): pass
