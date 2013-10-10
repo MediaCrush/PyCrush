@@ -34,14 +34,14 @@ def bind(**cfg):
                     if isinstance(value, list):
                         value = ','.join(value)
                 except KeyError:
-                    raise PyCrushError("Variable %r has no value." % name)
+                    raise PyCrushException("Variable %r has no value." % name)
                 
                 del params[name] # If we get here it means it's not a POST param and is safe to delete.
                 self._url = self._url.replace(v, value)
             
             for param in self.required_parameters:
                 if param not in params:
-                    raise PyCrushError("Required parameter %r is not present." % param)
+                    raise PyCrushException("Required parameter %r is not present." % param)
        
                 value = params[param] 
                 if param == 'file':
