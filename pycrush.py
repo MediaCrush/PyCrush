@@ -76,7 +76,7 @@ class API(object):
         endpoint='/<hash>/exists'
     )
     delete = bind(
-        endpoint='/<hash>/delete',
+        endpoint='/<hash>',
         method='DELETE'
     )
     status = bind(
